@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario | Banco de Sangre</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d9534f;
+            --secondary: #2c3e50;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+        }
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg); color: var(--secondary); }
+        .navbar { background-color: var(--secondary); padding: 1rem 2rem; display: flex; gap: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .navbar a { color: var(--white); text-decoration: none; font-weight: 600; }
+        .container { max-width: 800px; margin: 30px auto; background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        th { background-color: var(--secondary); color: white; padding: 18px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-weight: 500; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #fcfcfc; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html">Donantes</a>
+        <a href="donaciones.html">Donaciones</a>
+        <a href="inventario.html">Inventario</a>
+    </nav>
+    <div class="container">
+        <h1>Inventario Central</h1>
+        <table id="tabla-inventario">
+            <thead>
+                <tr>
+                    <th>Tipo de Sangre</th>
+                    <th>Cantidad Total (ml)</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+    <script src="app.js?v=2"></script>
+</body>
+</html>

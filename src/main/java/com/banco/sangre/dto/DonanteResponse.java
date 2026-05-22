@@ -21,4 +21,7 @@ public class DonanteResponse {
     private String direccion;
     private LocalDate fechaUltimaDonacion;
     private Boolean aceptaConsentimiento;
+    
+    // Este campo permite enviar la firma al frontend cuando consultes el donante
+    private String firmaConsentimiento;
 }

@@ -1,12 +1,14 @@
 package com.banco.sangre.service.impl;
 
 import com.banco.sangre.domain.Donante;
+import com.banco.sangre.domain.Consentimiento;
 import com.banco.sangre.dto.DonanteRequest;
 import com.banco.sangre.dto.DonanteResponse;
 import com.banco.sangre.exception.BusinessException;
 import com.banco.sangre.exception.ResourceNotFoundException;
 import com.banco.sangre.mapper.DonanteMapper;
 import com.banco.sangre.repository.DonanteRepository;
+import com.banco.sangre.repository.ConsentimientoRepository;
 import com.banco.sangre.service.DonanteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class DonanteServiceImpl implements DonanteService {
 
     private final DonanteRepository repository;
+    private final ConsentimientoRepository consentimientoRepository;
     private final DonanteMapper mapper;
 
     @Override
@@ -30,14 +33,31 @@ public class DonanteServiceImpl implements DonanteService {
         if (repository.existsByCorreo(request.getCorreo())) {
             throw new BusinessException("El correo ya esta registrado");
         }
+        
         Donante donante = mapper.toEntity(request);
-        return mapper.toResponse(repository.save(donante));
+        Donante donanteGuardado = repository.save(donante);
+        
+        Consentimiento consentimiento = new Consentimiento();
+        consentimiento.setDonante(donanteGuardado);
+        consentimiento.setFirmaDocumento(request.getFirmaConsentimiento());
+        consentimientoRepository.save(consentimiento);
+        
+        return mapper.toResponse(donanteGuardado);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DonanteResponse> listarTodos() {
         return repository.findAll().stream()
+            .map(mapper::toResponse)
+            .collect(Collectors.toList());
+    }
+
+    // Nuevo metodo para el filtro de tipo de sangre
+    @Override
+    @Transactional(readOnly = true)
+    public List<DonanteResponse> listarPorTipoSangre(String tipoSangre) {
+        return repository.findByTipoSangre(tipoSangre).stream()
             .map(mapper::toResponse)
             .collect(Collectors.toList());
     }
@@ -53,6 +73,13 @@ public class DonanteServiceImpl implements DonanteService {
     public DonanteResponse actualizar(Long id, DonanteRequest request) {
         Donante donante = obtenerDonante(id);
         mapper.updateEntity(donante, request);
+        
+        Consentimiento consentimiento = consentimientoRepository.findByDonanteId(id)
+                .orElse(new Consentimiento());
+        consentimiento.setDonante(donante);
+        consentimiento.setFirmaDocumento(request.getFirmaConsentimiento());
+        consentimientoRepository.save(consentimiento);
+        
         return mapper.toResponse(repository.save(donante));
     }
 
@@ -60,6 +87,7 @@ public class DonanteServiceImpl implements DonanteService {
     @Transactional
     public void eliminar(Long id) {
         Donante donante = obtenerDonante(id);
+        consentimientoRepository.findByDonanteId(id).ifPresent(consentimientoRepository::delete);
         repository.delete(donante);
     }
 
